@@ -1,16 +1,91 @@
-# React + Vite
+# MarketNest — Indian Stock Market Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium dark-themed Indian stock market dashboard built with React, Tailwind CSS, Node.js, Express, and MongoDB.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dashboard** — Summary cards (NIFTY 50, BANK NIFTY, SENSEX), top gainers/losers, stock table, watchlist panel
+- **Stock Details** — LTP, change, high/low, volume, sector, chart placeholder, add to watchlist
+- **Watchlist** — Save/remove stocks, persistent via MongoDB
+- **Charts** — Placeholder page for future TradingView / Recharts integration
+- **Dark Trading UI** — Navy/black background, card layout, green/red indicators, blue highlights
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer    | Technology                          |
+| -------- | ----------------------------------- |
+| Frontend | React 18, Tailwind CSS 3, Vite 5   |
+| Backend  | Node.js, Express 4                  |
+| Database | MongoDB (Mongoose)                  |
+| Icons    | Lucide React                        |
+| Routing  | React Router 6                      |
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+MarketNest/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── api/            # Axios API layer
+│   │   ├── components/     # Reusable UI components
+│   │   ├── layouts/        # Dashboard layout
+│   │   └── pages/          # Route pages
+│   └── ...
+├── server/                 # Express backend
+│   ├── config/             # DB connection
+│   ├── controllers/        # Route handlers
+│   ├── data/               # Mock stock data
+│   ├── models/             # Mongoose schemas
+│   ├── routes/             # API routes
+│   └── services/           # Business logic
+└── package.json            # Root scripts
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB running locally (default: `mongodb://localhost:27017/marketnest`)
+
+### Install Dependencies
+
+```bash
+# Install root + concurrently
+npm install
+
+# Install client and server dependencies
+npm run install:all
+```
+
+### Run Development Servers
+
+```bash
+# Run both frontend (port 3000) and backend (port 5000) together
+npm run dev
+
+# Or run them separately
+npm run dev:client    # Frontend only
+npm run dev:server    # Backend only
+```
+
+### API Endpoints
+
+| Method | Endpoint               | Description          |
+| ------ | ---------------------- | -------------------- |
+| GET    | /api/stocks            | All stocks           |
+| GET    | /api/stocks/:symbol    | Stock by symbol      |
+| GET    | /api/stocks/indices/all| Market indices       |
+| GET    | /api/stocks/gainers/top| Top gainers          |
+| GET    | /api/stocks/losers/top | Top losers           |
+| GET    | /api/watchlist         | Get watchlist        |
+| POST   | /api/watchlist         | Add to watchlist     |
+| DELETE | /api/watchlist/:symbol | Remove from watchlist|
+
+## Future Enhancements
+
+- Yahoo Finance / NSE real-time data integration
+- TradingView charting widget
+- Options analytics (PCR, max pain, OI data)
+- User authentication
+- Alerts and notifications
