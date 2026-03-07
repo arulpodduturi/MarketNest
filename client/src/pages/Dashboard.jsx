@@ -19,18 +19,18 @@ const Dashboard = ({ refreshKey }) => {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [stocksRes, indicesRes, gainersRes, losersRes, watchlistRes] = await Promise.all([
+      const [stocksRes, indicesRes, gainersRes, losersRes, watchlistRes] = await Promise.allSettled([
         fetchAllStocks(),
         fetchMarketIndices(),
         fetchTopGainers(),
         fetchTopLosers(),
         fetchWatchlist(),
       ]);
-      setStocks(stocksRes.data || []);
-      setIndices(indicesRes.data || []);
-      setGainers(gainersRes.data || []);
-      setLosers(losersRes.data || []);
-      setWatchlist(watchlistRes.data || []);
+      setStocks(stocksRes.status === 'fulfilled' ? stocksRes.value.data || [] : []);
+      setIndices(indicesRes.status === 'fulfilled' ? indicesRes.value.data || [] : []);
+      setGainers(gainersRes.status === 'fulfilled' ? gainersRes.value.data || [] : []);
+      setLosers(losersRes.status === 'fulfilled' ? losersRes.value.data || [] : []);
+      setWatchlist(watchlistRes.status === 'fulfilled' ? watchlistRes.value.data || [] : []);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
     } finally {

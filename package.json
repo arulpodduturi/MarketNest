@@ -11,7 +11,8 @@
     "dev:server": "cd server && npm run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "cd client && npm run build",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "stop": "taskkill /F /IM node.exe 2>$null || echo 'No node processes to stop'"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
