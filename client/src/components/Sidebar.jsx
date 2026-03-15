@@ -5,12 +5,14 @@ import {
   Star,
   LineChart,
   TrendingUp,
+  Layers,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/watchlist', label: 'Watchlist', icon: Star },
   { to: '/charts', label: 'Charts', icon: LineChart },
+  { to: '/fno', label: 'F&O', icon: Layers },
 ];
 
 const Sidebar = () => {

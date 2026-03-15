@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import stockRoutes from './routes/stockRoutes.js';
 import watchlistRoutes from './routes/watchlistRoutes.js';
+import fnoRoutes from './routes/fnoRoutes.js';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 // API Routes
 app.use('/api/stocks', stockRoutes);
 app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/fno', fnoRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
