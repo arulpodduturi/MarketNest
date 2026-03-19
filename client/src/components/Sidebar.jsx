@@ -13,6 +13,7 @@ const navItems = [
   { to: '/watchlist', label: 'Watchlist', icon: Star },
   { to: '/charts', label: 'Charts', icon: LineChart },
   { to: '/fno', label: 'F&O', icon: Layers },
+  { to: '/oi-analysis', label: 'OI Analysis', icon: BarChart3 },
 ];
 
 const Sidebar = () => {

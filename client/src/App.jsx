@@ -6,6 +6,7 @@ import StockDetails from './pages/StockDetails';
 import Watchlist from './pages/Watchlist';
 import Charts from './pages/Charts';
 import FNO from './pages/FNO';
+import OIAnalysisPage from './pages/OIAnalysisPage';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/watchlist" element={<Watchlist />} />
         <Route path="/charts" element={<Charts />} />
         <Route path="/fno" element={<FNO />} />
+        <Route path="/oi-analysis" element={<OIAnalysisPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

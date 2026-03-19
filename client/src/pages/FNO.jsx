@@ -21,6 +21,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { fetchOptionChain, fetchFNOSummary, fetchFNOAnalytics } from '../api/fnoApi';
+import OISignalCell from '../components/OISignalCell';
 
 // --- Formatting Helpers ---
 
@@ -378,19 +379,20 @@ const FNO = () => {
           <table className="w-full text-xs whitespace-nowrap">
             <thead className="sticky top-0 z-10">
               <tr className="bg-dark-800">
-                <th colSpan={6} className="text-center py-2 text-red-400 font-semibold text-[11px] uppercase tracking-wider border-b border-dark-700 border-r border-dark-700">
+                <th colSpan={7} className="text-center py-2 text-red-400 font-semibold text-[11px] uppercase tracking-wider border-b border-dark-700 border-r border-dark-700">
                   Calls
                 </th>
                 <th className="text-center py-2 text-dark-300 font-semibold text-[11px] uppercase tracking-wider border-b border-dark-700 border-r border-dark-700">
                   Strike
                 </th>
-                <th colSpan={6} className="text-center py-2 text-emerald-400 font-semibold text-[11px] uppercase tracking-wider border-b border-dark-700">
+                <th colSpan={7} className="text-center py-2 text-emerald-400 font-semibold text-[11px] uppercase tracking-wider border-b border-dark-700">
                   Puts
                 </th>
               </tr>
               <tr className="bg-dark-800/80 text-dark-400 font-medium">
                 <th className="text-right px-2 py-2 border-b border-dark-700">OI</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">Chng OI</th>
+                <th className="px-2 py-2 border-b border-dark-700 text-left">OI Signal</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">Volume</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">IV</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">LTP</th>
@@ -400,6 +402,7 @@ const FNO = () => {
                 <th className="text-right px-2 py-2 border-b border-dark-700">LTP</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">IV</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">Volume</th>
+                <th className="px-2 py-2 border-b border-dark-700 text-left">OI Signal</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">Chng OI</th>
                 <th className="text-right px-2 py-2 border-b border-dark-700">OI</th>
               </tr>
@@ -441,6 +444,10 @@ const FNO = () => {
                     <td className={`text-right px-2 py-1.5 ${changeColor(row.callChngInOI)} font-medium`}>
                       {fmtInt(row.callChngInOI)}
                     </td>
+                    {/* Call OI Signal */}
+                    <td className="px-2 py-1.5">
+                      <OISignalCell oi={row.callOI} changeOI={row.callChngInOI} side="call" maxOI={maxCallOI} />
+                    </td>
                     {/* Call Volume */}
                     <td className="text-right px-2 py-1.5 text-dark-400">{fmtInt(row.callVolume)}</td>
                     {/* Call IV */}
@@ -470,6 +477,10 @@ const FNO = () => {
                     <td className="text-right px-2 py-1.5 text-dark-400">{row.putIV !== null ? fmt(row.putIV) : '-'}</td>
                     {/* Put Volume */}
                     <td className="text-right px-2 py-1.5 text-dark-400">{fmtInt(row.putVolume)}</td>
+                    {/* Put OI Signal */}
+                    <td className="px-2 py-1.5">
+                      <OISignalCell oi={row.putOI} changeOI={row.putChngInOI} side="put" maxOI={maxPutOI} />
+                    </td>
                     {/* Put Chng in OI */}
                     <td className={`text-right px-2 py-1.5 ${changeColor(row.putChngInOI)} font-medium`}>
                       {fmtInt(row.putChngInOI)}
