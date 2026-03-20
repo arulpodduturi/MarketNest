@@ -138,8 +138,24 @@ const OIAnalysisPage = () => {
 
   const filtered = useMemo(() => {
     if (!debouncedSearch) return data;
-    return data.filter((r) => (r.symbol || r.scriptName || '').toString().toLowerCase().includes(debouncedSearch.toLowerCase()));
+    return data.filter((r) => {
+      const candidate = (r.symbol || r.scriptName || r.time || '').toString().toLowerCase();
+      return candidate.includes(debouncedSearch.toLowerCase());
+    });
   }, [data, debouncedSearch]);
+
+  const summary = useMemo(() => {
+    const totalRows = data.length;
+    const totalOi = data.reduce((sum, r) => sum + (Number(r.totalOi) || 0), 0);
+    const netOiChange = data.reduce((sum, r) => sum + (Number(r.oiChange) || 0), 0);
+    const avgIv = totalRows > 0 ? (data.reduce((sum, r) => sum + (Number(r.iv) || 0), 0) / totalRows) : 0;
+    return {
+      totalRows,
+      totalOi,
+      netOiChange,
+      avgIv: Number.isFinite(avgIv) ? avgIv.toFixed(2) : '0.00',
+    };
+  }, [data]);
 
   const onSelectColumns = () => {
     // UI-only placeholder for column selection
@@ -154,45 +170,75 @@ const OIAnalysisPage = () => {
   };
 
   return (
-    <div className="p-6">
-      <TopFilters
-        dataMode={dataMode}
-        setDataMode={setDataMode}
-        symbol={symbol}
-        setSymbol={setSymbol}
-        symbols={symbols}
-        expiry={expiry}
-        setExpiry={setExpiry}
-        expiries={expiries}
-        interval={interval}
-        setInterval={setIntervalValue}
-        onSelectColumns={onSelectColumns}
-        strikeFilter={strikeFilter}
-        setStrikeFilter={setStrikeFilter}
-        atm={atm}
-        setAtm={setAtm}
-        autoAdjustAtm={autoAdjustAtm}
-        setAutoAdjustAtm={setAutoAdjustAtm}
-        nearAtmFixed={nearAtmFixed}
-        setNearAtmFixed={setNearAtmFixed}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        lcr={lcr}
-        setLcr={setLcr}
-      />
+    <div className="p-6 space-y-5">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-white">OI Analysis</h1>
+          <p className="text-sm text-dark-400 mt-1">Real-time open interest and derivatives momentum view for {symbol} @ {expiry}.</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-dark-400">
+          <span>Last refresh: {new Date().toLocaleTimeString('en-IN')}</span>
+          <span className={`px-2 py-1 rounded ${autoRefresh ? 'bg-emerald-700 text-emerald-100' : 'bg-dark-800 text-dark-300'}`}>{autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="bg-dark-900 border border-dark-700 rounded p-3">
+          <div className="text-xs text-dark-400">Rows</div>
+          <div className="text-xl font-semibold">{summary.totalRows}</div>
+        </div>
+        <div className="bg-dark-900 border border-dark-700 rounded p-3">
+          <div className="text-xs text-dark-400">Total OI</div>
+          <div className="text-xl font-semibold">{summary.totalOi.toLocaleString()}</div>
+        </div>
+        <div className="bg-dark-900 border border-dark-700 rounded p-3">
+          <div className="text-xs text-dark-400">Net OI Change</div>
+          <div className={`text-xl font-semibold ${summary.netOiChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{summary.netOiChange.toLocaleString()}</div>
+        </div>
+        <div className="bg-dark-900 border border-dark-700 rounded p-3">
+          <div className="text-xs text-dark-400">Avg IV</div>
+          <div className="text-xl font-semibold">{summary.avgIv}</div>
+        </div>
+      </div>
+
+      <div className="bg-dark-900 border border-dark-700 rounded p-4">
+        <TopFilters
+          dataMode={dataMode}
+          setDataMode={setDataMode}
+          symbol={symbol}
+          setSymbol={setSymbol}
+          symbols={symbols}
+          expiry={expiry}
+          setExpiry={setExpiry}
+          expiries={expiries}
+          interval={interval}
+          setInterval={setIntervalValue}
+          onSelectColumns={onSelectColumns}
+          strikeFilter={strikeFilter}
+          setStrikeFilter={setStrikeFilter}
+          atm={atm}
+          setAtm={setAtm}
+          autoAdjustAtm={autoAdjustAtm}
+          setAutoAdjustAtm={setAutoAdjustAtm}
+          nearAtmFixed={nearAtmFixed}
+          setNearAtmFixed={setNearAtmFixed}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          lcr={lcr}
+          setLcr={setLcr}
+        />
+      </div>
 
       <InfoBar selectedStrikes={info.selectedStrikes} indexInfo={info.indexInfo} fairPrice={info.fairPrice} lotSize={info.lotSize} />
 
-      <div className="flex items-center gap-2 mb-3">
-        <input placeholder="Search script" value={search} onChange={(e) => setSearch(e.target.value)} className="bg-dark-800 px-3 py-2 rounded w-64" />
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} /> Auto-refresh
-        </label>
-        <button onClick={() => fetchData()} className="bg-primary-600 text-white px-3 py-2 rounded">Refresh</button>
+      <div className="flex flex-wrap items-center gap-3">
+        <input placeholder="Search script" value={search} onChange={(e) => setSearch(e.target.value)} className="bg-dark-800 px-3 py-2 rounded w-full md:w-64" />
+        <button onClick={() => setAutoRefresh((v) => !v)} className="bg-dark-800 text-dark-100 px-3 py-2 rounded">{autoRefresh ? 'Stop Auto-refresh' : 'Start Auto-refresh'}</button>
+        <button onClick={() => fetchData()} className="bg-primary-600 text-white px-3 py-2 rounded">Refresh Data</button>
       </div>
 
-      {loading && <div className="text-center py-6 text-dark-400">Loading...</div>}
-      {!loading && filtered.length === 0 && <div className="text-center py-6 text-dark-400">No data available</div>}
+      {loading && <div className="text-center py-6 text-dark-400">Loading data...</div>}
+      {!loading && filtered.length === 0 && <div className="text-center py-6 text-dark-400">No data available for selected filters</div>}
 
       <OITable data={filtered} />
     </div>
