@@ -167,9 +167,31 @@ export function getSummary(index, expiry) {
     }
   }
 
+  // Get ATM row data for ATM-specific metrics
+  let atmCallOI = null;
+  let atmPutOI = null;
+  let atmPCR = null;
+  if (atmStrike) {
+    const atmRow = rows.find((r) => r.strike === atmStrike);
+    if (atmRow) {
+      atmCallOI = atmRow.callOI;
+      atmPutOI = atmRow.putOI;
+      atmPCR = atmCallOI > 0 ? Math.round((atmPutOI / atmCallOI) * 1000) / 1000 : null;
+    }
+  }
+
+  // Mock Future Price (typically spot + small premium)
+  const futurePrice = spotPrice ? Math.round((spotPrice + (spotPrice * 0.002)) * 100) / 100 : null;
+  const futurePremium = spotPrice && futurePrice ? Math.round((futurePrice - spotPrice) * 100) / 100 : null;
+
   return {
     spotPrice,
+    futurePrice,
+    futurePremium,
     pcr,
+    atmCallOI,
+    atmPutOI,
+    atmPCR,
     maxCallOI,
     maxCallOIStrike,
     maxPutOI,
@@ -215,6 +237,22 @@ export function getAnalytics(index, expiry) {
   const putOIUnwinding = rows
     .filter((r) => r.putChngInOI !== null && r.putChngInOI < 0)
     .sort((a, b) => a.putChngInOI - b.putChngInOI)
+    .slice(0, 5)
+    .map((r) => ({ strike: r.strike, chngInOI: r.putChngInOI, oi: r.putOI, ltp: r.putLTP }));
+
+  // Call OI Writing: Strikes with high Call OI buildup + price decline (writers adding positions)
+  // Writers profit when price falls, so we look for positive OI change with negative price change
+  const callOIWriting = rows
+    .filter((r) => r.callChngInOI !== null && r.callChngInOI > 0 && r.callChng !== null && r.callChng <= 0)
+    .sort((a, b) => b.callChngInOI - a.callChngInOI)
+    .slice(0, 5)
+    .map((r) => ({ strike: r.strike, chngInOI: r.callChngInOI, oi: r.callOI, ltp: r.callLTP }));
+
+  // Put OI Writing: Strikes with high Put OI buildup + price decline (writers adding positions)
+  // Writers profit when price rises, so we look for positive OI change with negative price change
+  const putOIWriting = rows
+    .filter((r) => r.putChngInOI !== null && r.putChngInOI > 0 && r.putChng !== null && r.putChng <= 0)
+    .sort((a, b) => b.putChngInOI - a.putChngInOI)
     .slice(0, 5)
     .map((r) => ({ strike: r.strike, chngInOI: r.putChngInOI, oi: r.putOI, ltp: r.putLTP }));
 
@@ -268,6 +306,8 @@ export function getAnalytics(index, expiry) {
   return {
     callOIBuildup,
     putOIBuildup,
+    callOIWriting,
+    putOIWriting,
     callOIUnwinding,
     putOIUnwinding,
     resistanceLevels,

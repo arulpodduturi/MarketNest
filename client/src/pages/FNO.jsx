@@ -323,6 +323,13 @@ const FNO = () => {
             color="primary"
           />
           <FNOSummaryCard
+            title="Future Price"
+            value={summary.futurePrice ? fmt(summary.futurePrice) : '-'}
+            subtitle={summary.futurePremium ? `Premium: ${fmtChange(summary.futurePremium)}` : 'F&O Contract'}
+            icon={TrendingUp}
+            color="cyan"
+          />
+          <FNOSummaryCard
             title="PCR (OI)"
             value={summary.pcr !== null ? summary.pcr.toFixed(3) : '-'}
             subtitle={summary.pcr >= 1 ? 'Bullish bias' : summary.pcr < 0.7 ? 'Bearish bias' : 'Neutral'}
@@ -330,32 +337,46 @@ const FNO = () => {
             color={summary.pcr >= 1 ? 'emerald' : summary.pcr < 0.7 ? 'red' : 'amber'}
           />
           <FNOSummaryCard
+            title="ATM Call OI"
+            value={summary.atmCallOI ? fmtInt(summary.atmCallOI) : '-'}
+            subtitle={`ATM ${fmtInt(summary.atmStrike)}`}
+            icon={ArrowUpCircle}
+            color="red"
+          />
+          <FNOSummaryCard
+            title="ATM Put OI"
+            value={summary.atmPutOI ? fmtInt(summary.atmPutOI) : '-'}
+            subtitle={`ATM ${fmtInt(summary.atmStrike)}`}
+            icon={ArrowDownCircle}
+            color="emerald"
+          />
+          <FNOSummaryCard
+            title="ATM PCR"
+            value={summary.atmPCR !== null ? summary.atmPCR.toFixed(3) : '-'}
+            subtitle={summary.atmPCR >= 1 ? 'Put heavy' : 'Call heavy'}
+            icon={Crosshair}
+            color={summary.atmPCR >= 1 ? 'emerald' : 'red'}
+          />
+          <FNOSummaryCard
             title="Max Call OI"
             value={fmtInt(summary.maxCallOI)}
             subtitle={`Strike ${fmtInt(summary.maxCallOIStrike)}`}
-            icon={ArrowUpCircle}
+            icon={Shield}
             color="red"
           />
           <FNOSummaryCard
             title="Max Put OI"
             value={fmtInt(summary.maxPutOI)}
             subtitle={`Strike ${fmtInt(summary.maxPutOIStrike)}`}
-            icon={ArrowDownCircle}
+            icon={Target}
             color="emerald"
           />
           <FNOSummaryCard
             title="Total Call OI"
             value={fmtInt(summary.totalCallOI)}
             subtitle="Resistance side"
-            icon={Shield}
+            icon={Layers}
             color="red"
-          />
-          <FNOSummaryCard
-            title="Total Put OI"
-            value={fmtInt(summary.totalPutOI)}
-            subtitle="Support side"
-            icon={Target}
-            color="emerald"
           />
         </div>
       )}
@@ -609,6 +630,16 @@ const FNO = () => {
                 </div>
               )}
             </div>
+          </AnalyticsCard>
+
+          {/* Call OI Writing */}
+          <AnalyticsCard title="Call OI Writing" icon={TrendingUp}>
+            <OIBuildupTable data={analytics.callOIWriting} type="call" />
+          </AnalyticsCard>
+
+          {/* Put OI Writing */}
+          <AnalyticsCard title="Put OI Writing" icon={TrendingDown}>
+            <OIBuildupTable data={analytics.putOIWriting} type="put" />
           </AnalyticsCard>
 
           {/* Call OI Unwinding */}
