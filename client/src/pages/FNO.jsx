@@ -351,11 +351,25 @@ const FNO = () => {
             color="emerald"
           />
           <FNOSummaryCard
-            title="ATM PCR"
+            title="ATM PCR (OI)"
             value={summary.atmPCR !== null ? summary.atmPCR.toFixed(3) : '-'}
             subtitle={summary.atmPCR >= 1 ? 'Put heavy' : 'Call heavy'}
             icon={Crosshair}
             color={summary.atmPCR >= 1 ? 'emerald' : 'red'}
+          />
+          <FNOSummaryCard
+            title="Total Call OI"
+            value={fmtInt(summary.totalCallOI)}
+            subtitle="Resistance side"
+            icon={Layers}
+            color="red"
+          />
+          <FNOSummaryCard
+            title="Total Put OI"
+            value={fmtInt(summary.totalPutOI)}
+            subtitle="Support side"
+            icon={Layers}
+            color="emerald"
           />
           <FNOSummaryCard
             title="Max Call OI"
@@ -370,13 +384,6 @@ const FNO = () => {
             subtitle={`Strike ${fmtInt(summary.maxPutOIStrike)}`}
             icon={Target}
             color="emerald"
-          />
-          <FNOSummaryCard
-            title="Total Call OI"
-            value={fmtInt(summary.totalCallOI)}
-            subtitle="Resistance side"
-            icon={Layers}
-            color="red"
           />
         </div>
       )}
